@@ -9,7 +9,7 @@ def send_activation_email(self, email, code):
     send_mail(
         subject='Код Активации',
         message=f'Press in order to activate your account\n'
-        f'http://0.0.0.0:8000/api/account/activate/?c={code}\n',
+        f'http://localhost:3000/api/account/activate/?c={code}\n',
         from_email='dastan12151@gmail.com',
         recipient_list=[email],
         fail_silently=True)

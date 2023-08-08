@@ -17,7 +17,15 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(CourseDetailSerializer, self).to_representation(instance)
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
+        representation['favorite_count'] = instance.favorites.count()
+        user = self.context['request'].user
+        if user.is_authenticated:
+            representation['is_favorite'] = self.is_favorite(instance, user)
         return representation
+
+    @staticmethod
+    def is_favorite(video, user):
+        return user.favorites.filter(video=video).exists()
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -28,4 +36,12 @@ class CourseListSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(CourseListSerializer, self).to_representation(instance)
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
+        # representation['favorite_count'] = instance.favorites.count()
+        user = self.context['request'].user
+        if user.is_authenticated:
+            representation['is_favorite'] = self.is_favorite(instance, user)
         return representation
+
+    @staticmethod
+    def is_favorite(video, user):
+        return user.favorites.filter(video=video).exists()

@@ -20,6 +20,10 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 
-#
-# class Favorite(models.Model):
-#     owner = models.
+
+class Favorite(models.Model):
+    owner = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, related_name='favorites', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.course.title

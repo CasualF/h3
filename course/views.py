@@ -8,7 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from course_impressions.serializers import ReviewSerializer
 from rest_framework.response import Response
 from .models import Course, Subject
-
+from course_impressions.serializers import FavoriteSerializer
+from course_impressions.models import Favorite
 
 class StandardResultPagination(PageNumberPagination):
     page_size = 3
@@ -72,3 +73,19 @@ class CourseViewSet(ModelViewSet):
                 review.delete()
                 return Response('Successfully deleted', status=204)
         return Response('Not found', status=404)
+
+    @action(methods=['GET', 'POST'], detail=True)
+    def favorites(self, request, pk):
+        course = self.get_object()
+        user = request.user
+        if request.method == 'GET':
+            favorites = course.favorites.all()
+            serializer = FavoriteSerializer(instance=favorites, many=True)
+            return Response(serializer.data, status=200)
+
+        elif request.method == 'POST':
+            if user.favorites.filter(course=course).exists():
+                user.favorites.filter(course=course).delete()
+                return Response('Course was deleted from favorites', status=204)
+            Favorite.objects.create(owner=user, course=course)
+            return Response('Course has been added to favorites', status=201)
