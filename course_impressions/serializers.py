@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Review
+from .models import Review, Favorite
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -25,3 +25,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         validated_data['course'] = course
         validated_data['owner'] = owner
         return super().create(validated_data)
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    owner_email = serializers.ReadOnlyField(source='owner.email')
+    course_title = serializers.ReadOnlyField(source='course.title')
+
+    class Meta:
+        model = Favorite
+        fields = ['owner_email', 'video_title']
