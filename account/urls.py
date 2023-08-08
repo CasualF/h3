@@ -10,5 +10,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
     path('', views.UserDetailView.as_view()),
+    path('profile/', views.UserProfileView.as_view()),
 ]
 

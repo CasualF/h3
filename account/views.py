@@ -72,3 +72,13 @@ class UserDetailView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = permissions.IsAdminUser,
+
+
+class UserProfileView(GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def get(self, request):
+        user = request.user
+        profile = User.objects.get(email=user.email)
+        serializer = RegisterSerializer(instance=profile)
+        return Response(serializer.data, status=200)
