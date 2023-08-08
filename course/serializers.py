@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Avg
 from .models import Course, Subject
+from lesson.serializers import LessonListSerializer
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -16,6 +17,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super(CourseDetailSerializer, self).to_representation(instance)
+        representation['lesson_count'] = instance.lessons.count()
+        representation['lessons'] = LessonListSerializer(instance=instance.lessons.all(), many=True).data
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
         representation['favorite_count'] = instance.favorites.count()
         user = self.context['request'].user

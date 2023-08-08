@@ -79,6 +79,6 @@ class UserProfileView(GenericAPIView):
 
     def get(self, request):
         user = request.user
-        profile = User.objects.get(email=user.email)
+        profile = get_object_or_404(User, email=user.email)
         serializer = RegisterSerializer(instance=profile)
         return Response(serializer.data, status=200)

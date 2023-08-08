@@ -11,6 +11,7 @@ from .models import Course, Subject
 from course_impressions.serializers import FavoriteSerializer
 from course_impressions.models import Favorite
 
+
 class StandardResultPagination(PageNumberPagination):
     page_size = 3
     page_query_param = 'page'
@@ -36,7 +37,6 @@ class CourseViewSet(ModelViewSet):
     filter_backends = (SearchFilter, DjangoFilterBackend)
     search_fields = ('title', 'description')
     filterset_fields = ('title', 'description', 'subject__title')
-    serializer_class = CourseDetailSerializer
 
     def get_permissions(self):
         if self.action in ['destroy', 'create', 'update', 'partial_update']:
