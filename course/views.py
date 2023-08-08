@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
-from .serializers import CourseSerializer, SubjectSerializer
+from .serializers import CourseDetailSerializer, SubjectSerializer, CourseListSerializer
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
@@ -31,16 +31,21 @@ class SubjectViewSet(ModelViewSet):
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
     pagination_class = StandardResultPagination
     filter_backends = (SearchFilter, DjangoFilterBackend)
     search_fields = ('title', 'description')
     filterset_fields = ('title', 'description', 'subject__title')
+    serializer_class = CourseDetailSerializer
 
     def get_permissions(self):
         if self.action in ['destroy', 'create', 'update', 'partial_update']:
             return IsAdminUser(),
         return IsAuthenticatedOrReadOnly(),
+
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return CourseListSerializer
+        return CourseDetailSerializer
 
     @action(methods=['GET', 'POST', 'DELETE'], detail=True)
     def reviews(self, request, pk):
