@@ -9,12 +9,23 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CourseSerializer(serializers.ModelSerializer):
+class CourseDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__'
 
     def to_representation(self, instance):
-        representation = super(CourseSerializer, self).to_representation(instance)
+        representation = super(CourseDetailSerializer, self).to_representation(instance)
+        representation['rating'] = instance.reviews.aggregate(Avg('rating'))
+        return representation
+
+
+class CourseListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id', 'subject', 'preview', 'price']
+
+    def to_representation(self, instance):
+        representation = super(CourseListSerializer, self).to_representation(instance)
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
         return representation
