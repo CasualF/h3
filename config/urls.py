@@ -7,18 +7,6 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 
 
-# schema_view = get_schema_view(
-#     openapi.Info(
-#         title='Hackathon3 API',
-#         default_version='v1',
-#         description='Education Platform',
-#         terms_of_service="https://www.google.com/policies/terms/",
-#         contact=openapi.Contact(email="contact@snippets.local"),
-#         license=openapi.License(name="BSD License"),
-#     ),
-#     public=True,
-#     permission_classes=[permissions.AllowAny]
-# )
 schema_view = get_schema_view(
     openapi.Info(
         title="Hackathon3 API",
@@ -36,6 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/account/', include('account.urls')),
     path('api/', include('course.urls')),
+    path('api/course/lessons/', include('lesson.urls')),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger-ui'),
 ]
 

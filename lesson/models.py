@@ -7,6 +7,7 @@ class Lesson(models.Model):
     body = models.TextField(blank=True, null=True)
     course = models.ForeignKey(Course, related_name='lessons', on_delete=models.CASCADE)
     preview = models.ImageField(upload_to='images/lesson_previews/', null=True, blank=True)
+    youtube_link = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
