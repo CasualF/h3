@@ -24,8 +24,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return representation
 
     @staticmethod
-    def is_favorite(video, user):
-        return user.favorites.filter(video=video).exists()
+    def is_favorite(course, user):
+        return user.favorites.filter(course=course).exists()
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -43,5 +43,5 @@ class CourseListSerializer(serializers.ModelSerializer):
         return representation
 
     @staticmethod
-    def is_favorite(video, user):
-        return user.favorites.filter(video=video).exists()
+    def is_favorite(course, user):
+        return user.favorites.filter(course=course).exists()

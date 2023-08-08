@@ -33,4 +33,4 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ['owner_email', 'video_title']
+        fields = ['owner_email', 'course_title']
