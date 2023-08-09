@@ -1,5 +1,7 @@
 import os.path
 from pathlib import Path
+
+from celery.schedules import crontab
 from decouple import config
 from datetime import timedelta
 
@@ -36,6 +38,8 @@ INSTALLED_APPS = [
     'drf_api_logger',
     "corsheaders",
     "django_filters",
+    'django',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -172,3 +176,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+
+
+# TELEGRAM_BOT_API_KEY = '6321823841:AAEZoYEviHIkuu9HhsH_gZqT8vnR4y91J24'
+
+

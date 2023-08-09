@@ -1,7 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import permissions, generics
-from .serializers import RegisterSerializer
-from .tasks import send_activation_email
+from .serializers import RegisterSerializer, ResetPasswordSerializer
+from .tasks import send_activation_email, send_confirmation_password_task
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -82,3 +83,39 @@ class UserProfileView(GenericAPIView):
         profile = get_object_or_404(User, email=user.email)
         serializer = RegisterSerializer(instance=profile)
         return Response(serializer.data, status=200)
+
+
+class ResetPasswordView(APIView):
+    def get(self, request):
+        return Response({'message': 'Please provide an email to reset the password.'})
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            try:
+                user = User.objects.get(email=email)
+                user.create_activation_code()
+                user.save()
+                send_confirmation_password_task.delay(user.email, user.activation_code)
+                return Response({'activation_code': user.activation_code}, status=200)
+            except ObjectDoesNotExist:
+                return Response({'message': 'User with this email does not exist.'}, status=404)
+        return Response(serializer.errors, status=400)
+
+
+class ResetPasswordConfirmView(APIView):
+    def get(self, request, activation_code):
+        user = get_object_or_404(User, activation_code=activation_code)
+        return Response({'activation_code': activation_code})
+
+    def post(self, request, activation_code):
+        user = get_object_or_404(User, activation_code=activation_code)
+        # serializer = ResetPasswordSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     new_password = serializer.validated_data['new_password']
+        #     user.set_password(new_password)
+        #     user.activation_code = ''
+        #     user.save()
+        return Response('Ваш пароль успешно обновлен', status=200)
+        # return Response(serializer.errors, status=400)

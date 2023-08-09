@@ -15,12 +15,13 @@ app.conf.update(
 
 app.autodiscover_tasks()
 
-# app.conf.beat_schedule = {
-#     'Delete expired tokens from black list': {
-#         'task': 'account.tasks.clear_tokens',
-#         'schedule': crontab(hour='12', minute='0')
-#     },
-# }
+
+app.conf.beat_schedule = {
+    'Delete expired tokens from black list': {
+        'task': 'account.tasks.clear_tokens',
+        'schedule': crontab(hour='13', minute='28')
+    },
+}
 
 
 @app.task(bind=True)
