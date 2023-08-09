@@ -111,11 +111,11 @@ class ResetPasswordConfirmView(APIView):
 
     def post(self, request, activation_code):
         user = get_object_or_404(User, activation_code=activation_code)
-        serializer = ResetPasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            new_password = serializer.validated_data['new_password']
-            user.set_password(new_password)
-            user.activation_code = ''
-            user.save()
-            return Response('Ваш пароль успешно обновлен', status=200)
-        return Response(serializer.errors, status=400)
+        # serializer = ResetPasswordSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     new_password = serializer.validated_data['new_password']
+        #     user.set_password(new_password)
+        #     user.activation_code = ''
+        #     user.save()
+        return Response('Ваш пароль успешно обновлен', status=200)
+        # return Response(serializer.errors, status=400)
