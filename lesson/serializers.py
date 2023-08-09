@@ -5,7 +5,7 @@ from .models import Lesson, LessonContent
 class LessonListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ['title', 'preview', 'created_at']
+        fields = ['id', 'title', 'preview', 'created_at']
 
 
 class LessonDetailSerializer(serializers.ModelSerializer):
@@ -15,8 +15,22 @@ class LessonDetailSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super(LessonDetailSerializer, self).to_representation(instance)
-        representation['contents'] = LessonContentSerializer(instance=instance.contents.all(), many=True)
+        representation['like_count'] = instance.likes.count()
+        representation['contents'] = LessonContentSerializer(instance=instance.contents.all(), many=True).data
+
+        user = self.context['request'].user
+        if user.is_authenticated:
+            representation['is_liked'] = self.is_liked(instance, user)
+            representation['is_disliked'] = self.is_disliked(instance, user)
         return representation
+
+    @staticmethod
+    def is_liked(lesson, user):
+        return user.likes.filter(lesson=lesson).exists()
+
+    @staticmethod
+    def is_disliked(lesson, user):
+        return user.dislikes.filter(lesson=lesson).exists()
 
 
 class LessonContentSerializer(serializers.ModelSerializer):
