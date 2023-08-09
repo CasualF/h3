@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Avg
 from .models import Course, Subject
-from lesson.serializers import LessonListSerializer
+from lesson.serializers import LessonListSerializer, LessonDetailSerializer
 
 
 class SubjectSerializer(serializers.ModelSerializer):
