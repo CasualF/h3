@@ -5,6 +5,7 @@ from drf_yasg import openapi
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import permissions
+from question.views import QuestionView
 
 
 schema_view = get_schema_view(
@@ -26,6 +27,7 @@ urlpatterns = [
     path('api/', include('course.urls')),
     path('api/lessons/', include('lesson.urls')),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger-ui'),
+    path('api/questions/<int:pk>/', QuestionView.as_view())
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

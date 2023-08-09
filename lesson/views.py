@@ -7,6 +7,8 @@ from rest_framework.decorators import action
 from lesson_impressions.serializers import LikeSerializer, DislikeSerializer
 from rest_framework.response import Response
 from lesson_impressions.models import Like, Dislike
+from question.serializers import QuestionSerializer
+from question.models import Question
 
 
 class StandardResultPagination(PageNumberPagination):
@@ -59,3 +61,11 @@ class LessonViewSet(ModelViewSet):
                 return Response('Dislike was removed', status=204)
             Dislike.objects.create(owner=user, lesson=lesson)
             return Response('Dislike was added', status=201)
+
+    @action(methods=['GET'], detail=True)
+    def questions(self, request, pk):
+        lesson = self.get_object()
+        user = request.user
+        questions = lesson.questions.all()
+        serializer = QuestionSerializer(instance=questions, many=True, context={'owner': user})
+        return Response(serializer.data, status=200)

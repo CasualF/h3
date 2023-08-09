@@ -13,8 +13,8 @@ from course_impressions.models import Favorite
 
 
 class StandardResultPagination(PageNumberPagination):
-    page_size = 3
-    page_query_param = 'page'
+    page_size = 1
+    page_query_param = 'lesson'
 
 
 class SubjectViewSet(ModelViewSet):
