@@ -22,7 +22,7 @@ def send_activation_email(self, email, code):
 def send_confirmation_password_task(self, email, code):
     send_mail(
         subject='Здравствуйте, подтвердите новый пароль',
-        message=f'http://0.0.0.0:8000/api/account/reset-password/confirm/{code}/',
+        message=f'http://localhost:3000/api/account/reset-password/confirm/?c={code}',
         from_email='dastan12151@gmail.com',
         recipient_list=[email],
         fail_silently=False)
