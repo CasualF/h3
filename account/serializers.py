@@ -54,7 +54,6 @@ class ActivationSerializer(serializers.Serializer):
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     new_password = serializers.CharField(min_length=6, max_length=20, required=True, write_only=True)
     password_confirmation = serializers.CharField(min_length=6, max_length=20, required=True, write_only=True)
 
@@ -70,3 +69,7 @@ class ResetPasswordSerializer(serializers.Serializer):
                 'The password must contain letters and numbers'
             )
         return attrs
+
+
+class GetActivationSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)

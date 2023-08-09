@@ -12,7 +12,7 @@ urlpatterns = [
     path('', views.UserDetailView.as_view()),
     path('profile/', views.UserProfileView.as_view()),
     path('reset-password/', ResetPasswordView.as_view()),
-    path('reset-password/confirm/<str:activation_code>/', ResetPasswordConfirmView.as_view()),
+    path('reset-password/confirm/', ResetPasswordConfirmView.as_view()),
 
 ]
 
