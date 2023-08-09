@@ -34,12 +34,11 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'subject', 'preview', 'price']
+        fields = ['id', 'title', 'subject', 'preview', 'price']
 
     def to_representation(self, instance):
         representation = super(CourseListSerializer, self).to_representation(instance)
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
-        # representation['favorite_count'] = instance.favorites.count()
         user = self.context['request'].user
         if user.is_authenticated:
             representation['is_favorite'] = self.is_favorite(instance, user)
