@@ -12,11 +12,6 @@ from course_impressions.serializers import FavoriteSerializer
 from course_impressions.models import Favorite
 
 
-class StandardResultPagination(PageNumberPagination):
-    page_size = 1
-    page_query_param = 'lesson'
-
-
 class SubjectViewSet(ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
@@ -33,7 +28,6 @@ class SubjectViewSet(ModelViewSet):
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    pagination_class = StandardResultPagination
     filter_backends = (SearchFilter, DjangoFilterBackend)
     search_fields = ('title', 'description')
     filterset_fields = ('title', 'description', 'subject__title')
