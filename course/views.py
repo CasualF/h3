@@ -19,7 +19,7 @@ class SubjectViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['destroy', 'create', 'update', 'partial_update']:
             return IsAdminUser(),
-            return IsAuthenticatedOrReadOnly(),
+        return IsAuthenticatedOrReadOnly(),
 
 
 class CourseViewSet(ModelViewSet):
@@ -36,7 +36,6 @@ class CourseViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action in ['list']:
             return CourseListSerializer
-        user = self.request.user
         return CourseDetailSerializer
 
     def get_serializer_context(self):
