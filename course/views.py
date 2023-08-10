@@ -16,10 +16,6 @@ class SubjectViewSet(ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
 
-    def get_queryset(self):
-        print(super().get_queryset())
-        return super().get_queryset()
-
     def get_permissions(self):
         if self.action in ['destroy', 'create', 'update', 'partial_update']:
             return IsAdminUser(),

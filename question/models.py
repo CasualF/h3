@@ -13,7 +13,6 @@ class QuestionStatus(models.TextChoices):
 class Question(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='questions', on_delete=models.CASCADE, unique=True)
     body = models.TextField()
-    # status = models.CharField(max_length=30, choices=QuestionStatus.choices, default=QuestionStatus.in_process)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

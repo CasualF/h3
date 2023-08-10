@@ -115,3 +115,7 @@ class ResetPasswordConfirmView(APIView):
         user.activation_code = ''
         user.save()
         return Response('Ваш пароль успешно обновлен', status=200)
+
+
+# class TopUpView(generics.GenericAPIView):
+#     permission_classes = permissions.IsAuthenticated,

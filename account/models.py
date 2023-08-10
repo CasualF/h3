@@ -36,6 +36,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
+    balance = models.DecimalField(decimal_places=2, max_digits=9, default=0)
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True, default='images/defAv.png')
     activation_code = models.CharField(max_length=100, blank=True)
     username = models.CharField(max_length=50, unique=True, blank=True, null=True)
