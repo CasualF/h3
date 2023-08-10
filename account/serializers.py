@@ -48,6 +48,7 @@ class ActivationSerializer(serializers.Serializer):
             user = User.objects.get(activation_code=self.activation_code)
             user.is_active = True
             user.activation_code = ''
+            user.balance += 500
             user.save()
         except:
             self.fail('Incorrect activation code')
@@ -73,3 +74,10 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 class GetActivationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
+
+
+# class TopUpSerializer(serializers.Serializer):
+#     amount = serializers.DecimalField(decimal_places=2, max_digits=9)
+#
+#     def validate(self, attrs):
+#         user = self.context['request'].user

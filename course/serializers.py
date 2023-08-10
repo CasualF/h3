@@ -38,6 +38,7 @@ class CourseListSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super(CourseListSerializer, self).to_representation(instance)
+        representation['period'] = self.period_counter(instance)
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
         user = self.context['request'].user
         if user.is_authenticated:
@@ -47,3 +48,10 @@ class CourseListSerializer(serializers.ModelSerializer):
     @staticmethod
     def is_favorite(course, user):
         return user.favorites.filter(course=course).exists()
+
+    @staticmethod
+    def period_counter(course):
+        try:
+            return (course.ends_at - course.starts_at) / 60 / 60 / 24
+        except:
+            return None

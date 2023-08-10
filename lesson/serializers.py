@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Lesson, LessonContent
 from question.serializers import QuestionSerializer
+from question.models import Question
 
 
 class LessonListSerializer(serializers.ModelSerializer):
@@ -16,8 +17,12 @@ class LessonDetailSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super(LessonDetailSerializer, self).to_representation(instance)
-        representation['questions'] = QuestionSerializer(instance=instance.questions.all(), many=True).data
+        try:
+            representation['question'] = QuestionSerializer(instance=Question.objects.get(lesson=instance)).data
+        except:
+            representation['question'] = None
         representation['like_count'] = instance.likes.count()
+        representation['dislike_count'] = instance.dislikes.count()
         representation['contents'] = LessonContentSerializer(instance=instance.contents.all(), many=True).data
 
         user = self.context['request'].user
