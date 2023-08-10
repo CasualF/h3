@@ -7,8 +7,7 @@ from rest_framework.decorators import action
 from lesson_impressions.serializers import LikeSerializer, DislikeSerializer
 from rest_framework.response import Response
 from lesson_impressions.models import Like, Dislike
-from question.serializers import QuestionSerializer
-from question.models import Question
+from question.serializers import QuestionSerializer, CreateQuestionSerializer
 
 
 class StandardResultPagination(PageNumberPagination):
@@ -62,10 +61,23 @@ class LessonViewSet(ModelViewSet):
             Dislike.objects.create(owner=user, lesson=lesson)
             return Response('Dislike was added', status=201)
 
-    @action(methods=['GET'], detail=True)
+    @action(methods=['GET', 'POST', 'DELETE'], detail=True)
     def questions(self, request, pk):
         lesson = self.get_object()
         user = request.user
-        questions = lesson.questions.all()
-        serializer = QuestionSerializer(instance=questions, many=True, context={'owner': user})
-        return Response(serializer.data, status=200)
+        if self.request.method == 'GET':
+            questions = lesson.questions.all()
+            serializer = QuestionSerializer(instance=questions, many=True, context={'owner': user})
+            return Response(serializer.data, status=200)
+        elif self.request.method == 'POST':
+            if lesson.questions.all().exists():
+                return Response('This lesson already has a question', status=400)
+            serializer = CreateQuestionSerializer(data=request.data, context={'lesson': lesson})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response('Question created!', status=201)
+        elif self.request.method == 'DELETE':
+            if not lesson.questions.all().exists():
+                return Response('This lesson doesnt have any questions!', status=400)
+            lesson.questions.get(lesson=lesson).delete()
+            return Response('Question deleted', status=204)
