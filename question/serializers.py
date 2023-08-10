@@ -13,7 +13,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         representation['right_answer'] = self.get_right_answer(
             Question.objects.get(lesson=instance.lesson)
         )
-        representation['wrong_answers'] = ",".join([i.answer for i in instance.answers.all() if not i.correct])
+        representation['wrong_answers'] = ", ".join([i.answer for i in instance.answers.all() if not i.correct])
         try:
             user = self.context['request'].user
             if user.is_authenticated:
@@ -41,3 +41,23 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = '__all__'
+
+
+class CreateQuestionSerializer(serializers.Serializer):
+    body = serializers.CharField(required=True)
+    right_answer = serializers.CharField(required=True)
+    wrong_answers = serializers.CharField()
+
+    def create(self, validated_data):
+        question = Question.objects.create(lesson=self.context['lesson'], body=validated_data['body'])
+        question.save()
+        right_answer = Answer.objects.create(question=question,
+                                             answer=validated_data['right_answer'].strip(),
+                                             correct=True)
+        right_answer.save()
+        wrong_answers = [i.lstrip().rstrip() for i in validated_data['wrong_answers'].split(',')]
+        for i in wrong_answers:
+            answer = Answer.objects.create(question=question, answer=i, correct=False)
+            answer.save()
+
+        return validated_data
