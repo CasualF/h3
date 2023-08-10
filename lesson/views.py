@@ -1,6 +1,6 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSetMixin
 from .models import Lesson
-from rest_framework import permissions
+from rest_framework import permissions, generics, mixins
 from .serializers import LessonListSerializer, LessonDetailSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
@@ -8,6 +8,7 @@ from lesson_impressions.serializers import LikeSerializer, DislikeSerializer
 from rest_framework.response import Response
 from lesson_impressions.models import Like, Dislike
 from question.serializers import QuestionSerializer, CreateQuestionSerializer
+from course.models import Course
 
 
 class StandardResultPagination(PageNumberPagination):
@@ -17,19 +18,26 @@ class StandardResultPagination(PageNumberPagination):
 
 class LessonViewSet(ModelViewSet):
     queryset = Lesson.objects.all()
+    serializer_class = LessonDetailSerializer
     pagination_class = StandardResultPagination
 
-    def get_serializer_class(self):
-        if self.action in ['list']:
-            return LessonListSerializer
-        return LessonDetailSerializer
 
     def get_permissions(self):
-        if self.action in ['list']:
-            return permissions.IsAuthenticatedOrReadOnly(),
+        if self.action in ['list', 'retrieve']:
+            return permissions.IsAuthenticated(),
         if self.action in ['destroy', 'update', 'create', 'partial_update']:
             return permissions.IsAdminUser(),
         return permissions.IsAuthenticated(),
+
+    def list(self, request, *args, **kwargs):
+        course_id = request.GET.get('course_id')
+        course = Course.objects.get(id=course_id)
+        lessons = self.get_queryset().filter(course=course).all()
+        page = self.paginate_queryset(lessons)
+        if page is not None:
+            serializer = LessonDetailSerializer(instance=page, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response('smth went wrong in listing')
 
     @action(methods=['GET', 'POST'], detail=True)
     def likes(self, request, pk):
