@@ -31,8 +31,11 @@ class LessonViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         course_id = request.GET.get('course_id')
-        course = Course.objects.get(id=course_id)
-        lessons = self.get_queryset().filter(course=course).all()
+        try:
+            course = Course.objects.get(id=course_id)
+        except:
+            return Response('Either no course_id was provided or course with that id doesnt exist!', status=400)
+        lessons = self.get_queryset().filter(course=course).all().order_by('created_at')
         page = self.paginate_queryset(lessons)
         if page is not None:
             serializer = LessonDetailSerializer(instance=page, many=True)
