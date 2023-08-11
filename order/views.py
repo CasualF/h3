@@ -16,8 +16,17 @@ class OrderAPIView(generics.ListCreateAPIView):
 
 
 class OrderConfirmView(generics.RetrieveAPIView):
+    permission_classes = permissions.IsAuthenticated,
+
     def get(self, request, pk):
+        user = request.user
         order = Order.objects.get(pk=pk)
+        if user.email != order.owner.email:
+            return Response('User doesnt match with the order owner', status=400)
+        elif user.balance < order.total_sum:
+            return Response('Not enough credits')
         order.status = 'completed'
         order.save()
-        return Response({'message': 'Order confirmation sent'}, status=200)
+        user.balance -= order.total_sum
+        user.save()
+        return Response({'message': 'Order confirmed and payment successful'}, status=200)
