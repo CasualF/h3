@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import ActivationSerializer, GetActivationSerializer
 from rest_framework.generics import GenericAPIView
-
+from .serializers import TopUpSerializer
 
 User = get_user_model()
 
@@ -117,5 +117,21 @@ class ResetPasswordConfirmView(APIView):
         return Response('Ваш пароль успешно обновлен', status=200)
 
 
-# class TopUpView(generics.GenericAPIView):
-#     permission_classes = permissions.IsAuthenticated,
+class TopUpView(generics.GenericAPIView):
+    permission_classes = permissions.IsAuthenticated,
+
+    def post(self, request):
+        user = request.user
+        serializer = TopUpSerializer(data=request.data, context={'user': user})
+        serializer.is_valid(raise_exception=True)
+        amount = serializer.validated_data['amount']
+        user.balance += amount
+        user.save()
+        return Response(f'Successful top up, your current balance is {user.balance}', status=200)
+
+
+class PaymentView(generics.GenericAPIView):
+    permission_classes = permissions.IsAuthenticated,
+
+    def post(self, request):
+        user = request.user

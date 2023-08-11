@@ -27,7 +27,8 @@ urlpatterns = [
     path('api/', include('course.urls')),
     path('api/lessons/', include('lesson.urls')),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger-ui'),
-    path('api/questions/<int:pk>/', QuestionView.as_view())
+    path('api/questions/<int:pk>/', QuestionView.as_view()),
+    path('api/orders/', include('order.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

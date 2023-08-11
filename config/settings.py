@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'lesson_impressions',
     'course_impressions',
     'question',
+    'order',
 
     # LIBRARIES
     "rest_framework",
