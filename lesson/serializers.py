@@ -18,7 +18,7 @@ class LessonDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(LessonDetailSerializer, self).to_representation(instance)
         try:
-            question = instance.questions.get(lesson=instance).body
+            representation['question'] = instance.questions.get(lesson=instance).body
             representation['right_answer'] = self.get_right_answer(
                 Question.objects.get(lesson=instance)
             )
@@ -26,10 +26,9 @@ class LessonDetailSerializer(serializers.ModelSerializer):
                 [i.answer for i in instance.questions.get(lesson=instance).answers.all() if not i.correct]
             )
         except:
-            question = None
+            representation['question'] = None
             representation['right_answer'] = None
             representation['wrong_answers'] = None
-        representation['question'] = question
         representation['like_count'] = instance.likes.count()
         representation['dislike_count'] = instance.dislikes.count()
         representation['contents'] = LessonContentSerializer(instance=instance.contents.all(), many=True).data
