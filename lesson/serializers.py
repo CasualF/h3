@@ -29,6 +29,7 @@ class LessonDetailSerializer(serializers.ModelSerializer):
             representation['question'] = None
             representation['right_answer'] = None
             representation['wrong_answers'] = None
+        representation['comment_count'] = instance.comments.count()
         representation['like_count'] = instance.likes.count()
         representation['dislike_count'] = instance.dislikes.count()
         representation['contents'] = LessonContentSerializer(instance=instance.contents.all(), many=True).data
