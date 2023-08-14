@@ -18,7 +18,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(CourseDetailSerializer, self).to_representation(instance)
         representation['lesson_count'] = instance.lessons.count()
-        representation['lessons'] = LessonDetailSerializer(instance=instance.lessons.all(), many=True).data
+        representation['lessons'] = LessonListSerializer(instance=instance.lessons.all().order_by('created_at'),
+                                                         many=True).data
         representation['rating'] = instance.reviews.aggregate(Avg('rating'))
         representation['favorite_count'] = instance.favorites.count()
         try:

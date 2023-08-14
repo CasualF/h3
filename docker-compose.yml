@@ -64,7 +64,6 @@ services:
       - redis
 
 
-
   nginx:
      build:
        context: .
