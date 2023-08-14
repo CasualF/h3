@@ -48,6 +48,14 @@ class CreateQuestionSerializer(serializers.Serializer):
     right_answer = serializers.CharField(required=True)
     wrong_answers = serializers.CharField(required=False)
 
+    def validate(self, attrs):
+        try:
+            if self.right_answer == self.wrong_answers:
+                raise serializers.ValidationError('Right and wrong answers cannot be the same!')
+            return attrs
+        except:
+            return attrs
+
     def create(self, validated_data):
         question = Question.objects.create(lesson=self.context['lesson'], body=validated_data['body'])
         question.save()
