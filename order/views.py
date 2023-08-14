@@ -24,7 +24,7 @@ class OrderConfirmView(generics.RetrieveAPIView):
         if user.email != order.owner.email:
             return Response('User doesnt match with the order owner', status=400)
         elif user.balance < order.total_sum:
-            return Response('Not enough credits')
+            return Response('Not enough credits')   
         order.status = 'completed'
         order.save()
         user.balance -= order.total_sum

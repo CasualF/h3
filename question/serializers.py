@@ -46,7 +46,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 class CreateQuestionSerializer(serializers.Serializer):
     body = serializers.CharField(required=True)
     right_answer = serializers.CharField(required=True)
-    wrong_answers = serializers.CharField()
+    wrong_answers = serializers.CharField(required=False)
 
     def create(self, validated_data):
         question = Question.objects.create(lesson=self.context['lesson'], body=validated_data['body'])
@@ -55,9 +55,12 @@ class CreateQuestionSerializer(serializers.Serializer):
                                              answer=validated_data['right_answer'].strip(),
                                              correct=True)
         right_answer.save()
-        wrong_answers = [i.lstrip().rstrip() for i in validated_data['wrong_answers'].split(',')]
-        for i in wrong_answers:
-            answer = Answer.objects.create(question=question, answer=i, correct=False)
-            answer.save()
+        try:
+            wrong_answers = [i.lstrip().rstrip() for i in validated_data['wrong_answers'].split(',')]
+            for i in wrong_answers:
+                answer = Answer.objects.create(question=question, answer=i, correct=False)
+                answer.save()
+        except:
+            pass
 
         return validated_data
