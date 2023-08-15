@@ -186,7 +186,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-
-# TELEGRAM_BOT_API_KEY = '6321823841:AAEZoYEviHIkuu9HhsH_gZqT8vnR4y91J24'
-
-
+CSRF_TRUSTED_ORIGINS = []
+if scrf_subdomain := config("SCRF_SUBDOMAIN"):
+    CSRF_TRUSTED_ORIGINS += [f'http://{scrf_subdomain}', f'https://{scrf_subdomain}']
