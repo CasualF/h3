@@ -103,8 +103,8 @@ services:
     env_file:
       - .env
     environment:
-      - VIRTUAL_HOST=app.vanilla-code.pp.ua
-      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
+      - VIRTUAL_HOST=app.vanillacoding.pp.ua
+      - LETSENCRYPT_HOST=app.vanillacoding.pp.ua
 
   db:
     image: postgres
@@ -152,8 +152,8 @@ services:
       - web
       - redis
     environment:
-      - VIRTUAL_HOST=app.vanilla-code.pp.ua
-      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
+      - VIRTUAL_HOST=app.vanillacoding.pp.ua
+      - LETSENCRYPT_HOST=app.vanillacoding.pp.ua
 
 
   nginx:
