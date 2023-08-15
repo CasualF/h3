@@ -3,7 +3,7 @@ from course.models import Course
 
 
 class Lesson(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     body = models.TextField(blank=True, null=True)
     course = models.ForeignKey(Course, related_name='lessons', on_delete=models.CASCADE)
     preview = models.ImageField(upload_to='images/lesson_previews/', null=True, blank=True)
@@ -12,7 +12,7 @@ class Lesson(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.course.title} -> {self.title}'
+        return self.title
 
 
 class LessonContent(models.Model):

@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import ActivationSerializer
+from .serializers import ActivationSerializer, GetActivationSerializer
 from rest_framework.generics import GenericAPIView
-
+from .serializers import TopUpSerializer
 
 User = get_user_model()
 
@@ -89,7 +89,7 @@ class ResetPasswordView(APIView):
         return Response({'message': 'Please provide an email to reset the password.'})
 
     def post(self, request):
-        serializer = ResetPasswordSerializer(data=request.data)
+        serializer = GetActivationSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
             try:
@@ -104,17 +104,26 @@ class ResetPasswordView(APIView):
 
 
 class ResetPasswordConfirmView(APIView):
-    def get(self, request, activation_code):
+    def post(self, request):
+        activation_code = request.GET.get('c')
         user = get_object_or_404(User, activation_code=activation_code)
-        return Response({'activation_code': activation_code})
-
-    def post(self, request, activation_code):
-        user = get_object_or_404(User, activation_code=activation_code)
-        # serializer = ResetPasswordSerializer(data=request.data)
-        # if serializer.is_valid():
-        #     new_password = serializer.validated_data['new_password']
-        #     user.set_password(new_password)
-        #     user.activation_code = ''
-        #     user.save()
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_password = serializer.validated_data['new_password']
+        user.set_password(new_password)
+        user.activation_code = ''
+        user.save()
         return Response('Ваш пароль успешно обновлен', status=200)
-        # return Response(serializer.errors, status=400)
+
+
+class TopUpView(generics.GenericAPIView):
+    permission_classes = permissions.IsAuthenticated,
+
+    def post(self, request):
+        user = request.user
+        serializer = TopUpSerializer(data=request.data, context={'user': user})
+        serializer.is_valid(raise_exception=True)
+        amount = serializer.validated_data['amount']
+        user.balance += amount
+        user.save()
+        return Response(f'Successful top up, your current balance is {user.balance}', status=200)

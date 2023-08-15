@@ -1,6 +1,7 @@
 amqp==5.1.1
 asgiref==3.7.2
 async-timeout==4.0.2
+beautifulsoup4==4.12.2
 billiard==4.1.0
 bleach==6.0.0
 celery==5.3.1
@@ -26,12 +27,14 @@ gunicorn==21.2.0
 idna==3.4
 inflection==0.5.1
 kombu==5.3.1
+lxml==4.9.3
 packaging==23.1
 paypal==1.2.5
 Pillow==10.0.0
 prompt-toolkit==3.0.39
 psycopg2-binary==2.9.6
 PyJWT==2.8.0
+pyTelegramBotAPI==4.12.0
 python-crontab==3.0.0
 python-dateutil==2.8.2
 python-decouple==3.8
@@ -40,7 +43,9 @@ PyYAML==6.0.1
 redis==4.6.0
 requests==2.31.0
 six==1.16.0
+soupsieve==2.4.1
 sqlparse==0.4.4
+telebot==0.0.5
 typing_extensions==4.7.1
 tzdata==2023.3
 uritemplate==4.1.1
@@ -48,6 +53,3 @@ urllib3==2.0.4
 vine==5.0.0
 wcwidth==0.2.6
 webencodings==0.5.1
-telebot
-BeautifulSoup4
-lxml

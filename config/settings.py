@@ -1,7 +1,5 @@
 import os.path
 from pathlib import Path
-
-from celery.schedules import crontab
 from decouple import config
 from datetime import timedelta
 
@@ -30,6 +28,7 @@ INSTALLED_APPS = [
     'course_impressions',
     'question',
     'telegram',
+    'order',
 
 
     # LIBRARIES
@@ -133,7 +132,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=40),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=24),
     'BLACKLIST_AFTER_ROTATION': True
 }
@@ -180,7 +179,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-
 TELEGRAM_BOT_API_KEY = '6067733325:AAFXLE8sL5Rlg7XejBXr-9lTsiFC9c4x3lw'
 
 
+# CSRF_TRUSTED_ORIGINSUSTED_ORIGINS = []
+# if scrf_subdomain := config("SCRF_SUBDOMAIN"):
+#     CSRF_TRUSTED_ORIGINS += [f'http://{scrf_subdomain}', f'https://{scrf_subdomain}']

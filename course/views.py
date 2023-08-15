@@ -12,18 +12,9 @@ from course_impressions.serializers import FavoriteSerializer
 from course_impressions.models import Favorite
 
 
-class StandardResultPagination(PageNumberPagination):
-    page_size = 1
-    page_query_param = 'lesson'
-
-
 class SubjectViewSet(ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
-
-    def get_queryset(self):
-        print(super().get_queryset())
-        return super().get_queryset()
 
     def get_permissions(self):
         if self.action in ['destroy', 'create', 'update', 'partial_update']:
@@ -33,7 +24,6 @@ class SubjectViewSet(ModelViewSet):
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    pagination_class = StandardResultPagination
     filter_backends = (SearchFilter, DjangoFilterBackend)
     search_fields = ('title', 'description')
     filterset_fields = ('title', 'description', 'subject__title')
@@ -47,6 +37,10 @@ class CourseViewSet(ModelViewSet):
         if self.action in ['list']:
             return CourseListSerializer
         return CourseDetailSerializer
+
+    def get_serializer_context(self):
+        context = {'owner': self.request.user}
+        return context
 
     @action(methods=['GET', 'POST', 'DELETE'], detail=True)
     def reviews(self, request, pk):

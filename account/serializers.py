@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from course_impressions.serializers import FavoriteSerializer
-
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -12,7 +12,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password_confirmation', 'first_name', 'last_name', 'avatar')
+        fields = ('username', 'email', 'password', 'password_confirmation',
+                  'balance', 'first_name', 'last_name', 'avatar')
 
     def validate(self, attrs):
         password = attrs['password']
@@ -48,13 +49,13 @@ class ActivationSerializer(serializers.Serializer):
             user = User.objects.get(activation_code=self.activation_code)
             user.is_active = True
             user.activation_code = ''
+            user.balance += 500
             user.save()
         except:
             self.fail('Incorrect activation code')
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     new_password = serializers.CharField(min_length=6, max_length=20, required=True, write_only=True)
     password_confirmation = serializers.CharField(min_length=6, max_length=20, required=True, write_only=True)
 
@@ -70,3 +71,25 @@ class ResetPasswordSerializer(serializers.Serializer):
                 'The password must contain letters and numbers'
             )
         return attrs
+
+
+class GetActivationSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class TopUpSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(decimal_places=2, max_digits=9)
+
+    def validate(self, attrs):
+        user = self.context['user']
+        if not User.objects.filter(email=user.email).exists():
+            return Response('Current user doesnt exist', status=400)
+        return attrs
+
+
+class PaymentSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(decimal_places=2, max_digits=9)
+    order = serializers.IntegerField(required=True)
+
+    def validate(self, attrs):
+        order_id = attrs['order']
