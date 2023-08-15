@@ -14,7 +14,6 @@ from .serializers import TopUpSerializer
 
 User = get_user_model()
 
-
 class RegistrationView(APIView):
     permission_classes = permissions.AllowAny,
 

@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     'lesson_impressions',
     'course_impressions',
     'question',
+    'telegram',
     'order',
+
 
     # LIBRARIES
     "rest_framework",
@@ -176,6 +178,10 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = []
-if scrf_subdomain := config("SCRF_SUBDOMAIN"):
-    CSRF_TRUSTED_ORIGINS += [f'http://{scrf_subdomain}', f'https://{scrf_subdomain}']
+
+TELEGRAM_BOT_API_KEY = '6067733325:AAFXLE8sL5Rlg7XejBXr-9lTsiFC9c4x3lw'
+
+
+# CSRF_TRUSTED_ORIGINSUSTED_ORIGINS = []
+# if scrf_subdomain := config("SCRF_SUBDOMAIN"):
+#     CSRF_TRUSTED_ORIGINS += [f'http://{scrf_subdomain}', f'https://{scrf_subdomain}']
