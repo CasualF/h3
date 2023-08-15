@@ -103,9 +103,8 @@ services:
     env_file:
       - .env
     environment:
-      - VIRTUAL_HOST=app.kayakta.pp.ua
-      - LETSENCRYPT_HOST=app.kayakta.pp.ua
-
+      - VIRTUAL_HOST=app.vanilla-code.pp.ua
+      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
 
   db:
     image: postgres
@@ -113,8 +112,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: ubuntu
-      POSTGRES_USER: ubuntu
+      POSTGRES_DB: hack_v2
+      POSTGRES_USER: dastan
       POSTGRES_PASSWORD: 1
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -153,8 +152,8 @@ services:
       - web
       - redis
     environment:
-      - VIRTUAL_HOST=api.vanillacode.pp.ua
-      - LETSENCRYPT_HOST=*.vanillacode.pp.ua
+      - VIRTUAL_HOST=app.vanilla-code.pp.ua
+      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
 
 
   nginx:
