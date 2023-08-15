@@ -28,6 +28,7 @@ class LessonViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         course_id = request.GET.get('course_id')
+        user = request.user
         try:
             course = Course.objects.get(id=course_id)
         except:
@@ -35,7 +36,7 @@ class LessonViewSet(ModelViewSet):
         lessons = self.get_queryset().filter(course=course).all().order_by('created_at')
         page = self.paginate_queryset(lessons)
         if page is not None:
-            serializer = LessonDetailSerializer(instance=page, many=True)
+            serializer = LessonDetailSerializer(instance=page, many=True, context={'owner': user})
             return self.get_paginated_response(serializer.data)
         return Response('smth went wrong in listing')
 

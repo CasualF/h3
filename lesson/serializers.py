@@ -39,7 +39,12 @@ class LessonDetailSerializer(serializers.ModelSerializer):
                 representation['is_liked'] = self.is_liked(instance, user)
                 representation['is_disliked'] = self.is_disliked(instance, user)
         except:
-            pass
+            try:
+                user = self.context['owner']
+                representation['is_liked'] = self.is_liked(instance, user)
+                representation['is_disliked'] = self.is_disliked(instance, user)
+            except:
+                pass
         return representation
 
     @staticmethod
