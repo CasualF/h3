@@ -50,3 +50,4 @@ wcwidth==0.2.6
 webencodings==0.5.1
 telebot
 BeautifulSoup4
+lxml

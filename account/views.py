@@ -14,7 +14,6 @@ from rest_framework.generics import GenericAPIView
 
 User = get_user_model()
 
-
 class RegistrationView(APIView):
     permission_classes = permissions.AllowAny,
 
