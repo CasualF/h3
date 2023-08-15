@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django_filters",
     'django',
     'django_celery_beat',
-    'oauth2_provider',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +128,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
 }
 
@@ -139,10 +137,6 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True
 }
 
-OAUTH2_PROVIDER = {
-    'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,
-    'REFRESH_TOKEN_EXPIRE_SECONDS': 3600 * 24 * 7,
-}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -184,9 +178,4 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-
-
-# TELEGRAM_BOT_API_KEY = '6321823841:AAEZoYEviHIkuu9HhsH_gZqT8vnR4y91J24'
-
 
