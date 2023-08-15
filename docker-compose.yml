@@ -1,21 +1,110 @@
-version: '3.3'
+#version: '2'
+#
+#services:
+#  web:
+#    build: .
+#    command: >
+#      sh -c "gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+#    volumes:
+#      - .:/usr/src/app/
+#      - static_volume:/usr/src/app/static
+#      - media_volume:/usr/src/app/media
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - db
+#      - redis
+#      - migration
+#
+#
+#  db:
+#    image: postgres
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_DB: hack_v2
+#      POSTGRES_USER: dastan
+#      POSTGRES_PASSWORD: 1
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data/
+#
+#  migration:
+#    build: .
+#    command: >
+#      sh -c "python manage.py makemigrations &&
+#             python manage.py migrate"
+#    volumes:
+#      - .:/usr/src/app/
+#    depends_on:
+#      - db
+#
+#  celery-beat:
+#    build: .
+#    command: celery -A config beat -l INFO
+#    volumes:
+#      - .:/usr/src/app/
+#    depends_on:
+#      - web
+#      - redis
+#
+#  redis:
+#    image: redis
+#    ports:
+#      - "6379:6379"
+#
+#  celery:
+#    build: .
+#    command: celery -A config worker -l INFO
+#
+#    volumes:
+#      - .:/usr/src/app/
+#    depends_on:
+#      - web
+#      - redis
+#
+#
+#  nginx:
+#     build:
+#       context: .
+#       dockerfile: nginx/Dockerfile
+#     ports:
+#       - "80:80"
+#     volumes:
+#       - static_volume:/usr/src/app/static
+#       - media_volume:/usr/src/app/media
+#     depends_on:
+#       - web
+#
+#volumes:
+#  postgres_data:
+#  static_volume:
+#  media_volume:
+#
+version: '2'
 
 services:
   web:
     build: .
     command: >
       sh -c "gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    container_name: app_django
     volumes:
       - .:/usr/src/app/
       - static_volume:/usr/src/app/static
       - media_volume:/usr/src/app/media
+
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
       - migration
-
+    env_file:
+      - .env
+    environment:
+      - VIRTUAL_HOST=app.vanilla-code.pp.ua
+      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
 
   db:
     image: postgres
@@ -39,14 +128,6 @@ services:
     depends_on:
       - db
 
-  celery-beat:
-    build: .
-    command: celery -A config beat -l INFO
-    volumes:
-      - .:/usr/src/app/
-    depends_on:
-      - web
-      - redis
 
   redis:
     image: redis
@@ -56,12 +137,23 @@ services:
   celery:
     build: .
     command: celery -A config worker -l INFO
-
     volumes:
       - .:/usr/src/app/
     depends_on:
       - web
       - redis
+
+  celery-beat:
+    build: .
+    command: celery -A config beat -l INFO
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - web
+      - redis
+    environment:
+      - VIRTUAL_HOST=app.vanilla-code.pp.ua
+      - LETSENCRYPT_HOST=app.vanilla-code.pp.ua
 
 
   nginx:
@@ -70,13 +162,47 @@ services:
        dockerfile: nginx/Dockerfile
      ports:
        - "80:80"
+       - "443:443"
      volumes:
        - static_volume:/usr/src/app/static
        - media_volume:/usr/src/app/media
+       - certs:/etc/nginx/certs
+       - vhost:/etc/nginx/vhost.d
+       - html:/usr/share/nginx/html
+       - /var/run/docker.sock:/tmp/docker.sock:ro
      depends_on:
        - web
+
+  acme_companion:
+    image: nginxproxy/acme-companion:2.2
+    container_name: acme_companion
+    volumes_from:
+      - nginx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 app_django
+
+  bot:
+    build: .
+    command: python manage.py bot
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - web
+      - redis
+
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  certs:
+  vhost:
+  html:
+  acme:
