@@ -128,10 +128,3 @@ class TopUpView(generics.GenericAPIView):
         user.balance += amount
         user.save()
         return Response(f'Successful top up, your current balance is {user.balance}', status=200)
-
-
-class PaymentView(generics.GenericAPIView):
-    permission_classes = permissions.IsAuthenticated,
-
-    def post(self, request):
-        user = request.user
